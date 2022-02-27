@@ -43,8 +43,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 function Modal(props) {
-  const { handleClose, callback, title, children, width, height, handleCount } =
-    props
+  const { handleClose, title, children, width, height, handleCount } = props
   const classes = useStyles()
 
   useEffect(() => {
