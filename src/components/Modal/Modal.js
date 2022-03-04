@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useEffect, useContext, useCallback } from 'react'
 import PropTypes from 'prop-types'
 import { Button, IconButton, makeStyles, Typography } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close'
 import ReactDom from 'react-dom'
+import { ModalContext } from '../../context/modalContext'
 
 const useStyles = makeStyles((theme) => ({
   modalOverlay: {
@@ -43,16 +44,10 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 function Modal(props) {
-  const { handleClose, title, children, width, height, handleCount } = props
-  const classes = useStyles()
+  const { id, title, children, width, height } = props
 
-  useEffect(() => {
-    const closeOnEscapeKey = (e) => (e.key === 'Escape' ? handleClose() : null)
-    document.body.addEventListener('keydown', closeOnEscapeKey)
-    return () => {
-      document.body.removeEventListener('keydown', closeOnEscapeKey)
-    }
-  }, [handleClose])
+  const classes = useStyles()
+  const [modalStack, dispatch] = useContext(ModalContext)
 
   const modal = (
     <div className={classes.modalOverlay}>
@@ -67,7 +62,12 @@ function Modal(props) {
           <IconButton
             aria-label="close"
             className={classes.closeButton}
-            onClick={handleClose}
+            onClick={() =>
+              dispatch({
+                type: 'CLOSE_MODAL',
+                payload: { id }
+              })
+            }
           >
             <CloseIcon />
           </IconButton>
@@ -75,14 +75,28 @@ function Modal(props) {
 
         <div className={classes.modalContent}>{children}</div>
         <div className={classes.modalAction}>
-          <Button color="primary" variant="contained" onClick={handleCount}>
+          <Button
+            color="primary"
+            variant="contained"
+            onClick={() =>
+              dispatch({
+                type: 'OPEN_MODAL',
+                payload: { id: modalStack.modals.length + 1 }
+              })
+            }
+          >
             Open Modal
           </Button>
           <Button
             color="primary"
             variant="contained"
             style={{ marginLeft: '8px' }}
-            onClick={handleClose}
+            onClick={() =>
+              dispatch({
+                type: 'CLOSE_MODAL',
+                payload: { id }
+              })
+            }
           >
             Close Modal
           </Button>
