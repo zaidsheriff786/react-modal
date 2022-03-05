@@ -1,5 +1,5 @@
 import React from 'react'
-import Button from './components/Buttons/Button'
+import Button from './components/Button/Button'
 import Modals from './components/Modal/Modals'
 import { ModalProvider } from './context/modalContext'
 import './App.css'
