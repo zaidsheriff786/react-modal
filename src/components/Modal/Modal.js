@@ -1,6 +1,13 @@
 import React, { useContext } from 'react'
 import PropTypes from 'prop-types'
-import { Button, IconButton, makeStyles, Typography } from '@material-ui/core'
+import {
+  Button,
+  IconButton,
+  makeStyles,
+  Typography,
+  useTheme,
+  useMediaQuery
+} from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close'
 import { ModalContext } from '../../context/modalContext'
 
@@ -16,7 +23,11 @@ const useStyles = makeStyles((theme) => ({
     props.id && {
       top: `${props.id * 50}px`,
       left: `${props.id * 50}px`,
-      position: 'fixed'
+      position: 'fixed',
+      [theme.breakpoints.down('sm')]: {
+        top: `${props.id * 10}px`,
+        left: 0
+      }
     },
 
   modalWrapper: {
@@ -56,13 +67,20 @@ const useStyles = makeStyles((theme) => ({
 function Modal(props) {
   const { id, title, children, width, height } = props
   const classes = useStyles({ id })
+  const theme = useTheme()
   const [modalStack, dispatch] = useContext(ModalContext)
+  const isMobile = useMediaQuery(theme.breakpoints.down('xs'), { noSsr: true })
+
   return (
     <div className={classes.modalOverlay}>
       <div className={id == 1 ? classes.modalWrapper : classes.wrappers}>
         <div
           className={classes.modalContainer}
-          style={{ width: width, height: height }}
+          style={{
+            ...(isMobile
+              ? { width: 'auto', height: height }
+              : { width: width, height: height })
+          }}
         >
           <div className={classes.modalHeader}>
             <Typography variant="h6" className={classes.title}>
